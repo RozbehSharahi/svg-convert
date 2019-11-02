@@ -4,7 +4,6 @@ namespace RozbehSharahi\SvgConvert;
 
 use Imagick;
 use ImagickException;
-use ImagickPixel;
 use InvalidArgumentException;
 use Webmozart\Assert\Assert;
 
@@ -99,7 +98,6 @@ class Svg
     protected function getPngBase64FromFile(int $width = null, int $height = null): string
     {
         $imageMagick = new Imagick();
-        $imageMagick->setBackgroundColor(new ImagickPixel('transparent'));
         $imageMagick->readImageBlob(file_get_contents($this->getServerPath()));
         $imageMagick->setImageFormat("png32");
 
@@ -108,8 +106,6 @@ class Svg
         }
 
         $imageContent = $imageMagick->getImageBlob();
-        $imageMagick->clear();
-        $imageMagick->destroy();
 
         return "data:image/png;base64," . base64_encode($imageContent);
     }
