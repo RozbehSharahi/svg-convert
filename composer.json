@@ -1,0 +1,23 @@
+{
+    "name": "rozbehsharahi/svg-convert",
+    "description": "Library to convert SVG to other formats",
+    "type": "library",
+    "license": "MIT",
+    "authors": [
+        {
+            "name": "Rozbeh Chiryai Sharahi",
+            "email": "rozbeh.sharahi@turbinekreuzberg.com"
+        }
+    ],
+    "require": {
+        "php": ">=7.1.0"
+    },
+    "autoload": {
+        "psr-4": {
+            "RozbehSharahi\\SvgConvert\\": "src/"
+        }
+    },
+    "require-dev": {
+        "webmozart/assert": "^1.5"
+    }
+}
