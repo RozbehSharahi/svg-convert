@@ -2,112 +2,90 @@
 
 namespace RozbehSharahi\SvgConvert;
 
-use Imagick;
-use ImagickException;
 use InvalidArgumentException;
 use Webmozart\Assert\Assert;
 
 class Svg
 {
-    const TYPE_FILE = 'file';
 
-    /**
-     * @var string
-     */
-    protected static $defaultRootDirectory = '/var/www/html';
+    protected static $tempDirectory = __DIR__ . '/tmp';
 
-    /**
-     * @var string
-     */
-    protected $sourceType;
+    private $content;
 
-    /**
-     * @var string
-     */
-    private $source;
-
-    /**
-     * @var string
-     */
-    private $basePath;
-
-    public static function createFromFile(string $file, string $rootDirectory = null): self
+    static public function setTempDirectory(string $directory): void
     {
-        return new self($file, self::TYPE_FILE, $rootDirectory ?: self::$defaultRootDirectory);
+        static::$tempDirectory = $directory;
     }
 
-    /**
-     * @param string $defaultRootDirectory
-     */
-    public static function setDefaultRootDirectory(string $defaultRootDirectory): void
+    static public function createFromFile(string $file): self
     {
-        self::$defaultRootDirectory = $defaultRootDirectory;
+        Assert::file($file, "Appears not to be file: `{$file}`");
+        return new static(file_get_contents($file));
     }
 
-    /**
-     * Svg constructor.
-     * @param string $source
-     * @param string $sourceType
-     * @param string $rootDirectory
-     */
-    public function __construct(
-        string $source,
-        string $sourceType,
-        string $rootDirectory
-    ) {
-        Assert::oneOf($sourceType, [static::TYPE_FILE], "Currently not supported file type: {$this->sourceType}");
-
-        $this->sourceType = $sourceType;
-        $this->source = $source;
-        $this->basePath = $rootDirectory;
-
-        if ($this->sourceType === static::TYPE_FILE) {
-            Assert::fileExists($this->getServerPath(), "File `{$this->getServerPath()}` does not exist");
-        }
+    static public function createFromContent(string $content): self
+    {
+        return new static($content);
     }
 
-    /**
-     * @return string
-     */
-    protected function getServerPath(): string
+    static public function createFromBase64(string $content): self
     {
-        return $this->basePath . $this->source;
+        return new static(base64_decode($content));
     }
 
-    /**
-     * @param int|null $width
-     * @param int|null $height
-     * @return string
-     * @throws ImagickException
-     */
-    public function getPngBase64(int $width = null, int $height = null): string
+    public function __construct(string $content)
     {
-        if ($this->sourceType === self::TYPE_FILE) {
-            return $this->getPngBase64FromFile($width, $height);
-        }
-
-        throw new InvalidArgumentException("Converting to png base64 is not implemented for {$this->sourceType}");
+        $this->assertTempFolderExists();
+        $this->content = $content;
     }
 
-    /**
-     * @param int|null $width
-     * @param int|null $height
-     * @return string
-     * @throws ImagickException
-     */
-    protected function getPngBase64FromFile(int $width = null, int $height = null): string
+    public function getPngBase64(): string
     {
-        $imageMagick = new Imagick();
-        $imageMagick->readImageBlob(file_get_contents($this->getServerPath()));
-        $imageMagick->setImageFormat("png32");
+        $fileHash = $this->createUniqueFileHash();
+        $inputFilePath = "input_{$fileHash}.svg";
+        $outputFilePath = "output_{$fileHash}.png";
 
-        if ($width && $height) {
-            $imageMagick->resizeImage($width, $height, Imagick::FILTER_LANCZOS, 1);
-        }
-
-        $imageContent = $imageMagick->getImageBlob();
+        file_put_contents($inputFilePath, $this->content);
+        exec("convert {$inputFilePath} {$outputFilePath}");
+        $imageContent = file_get_contents($outputFilePath);
+        unlink($outputFilePath);
+        unlink($inputFilePath);
 
         return "data:image/png;base64," . base64_encode($imageContent);
+    }
+
+    public function writeToFile(string $file): self
+    {
+        $fileHash = $this->createUniqueFileHash();
+
+        $inputFilePath = "input_{$fileHash}.svg";
+
+        file_put_contents($inputFilePath, $this->content);
+        exec("convert {$inputFilePath} {$file}");
+        unlink(($inputFilePath));
+        
+        return $this;
+    }
+
+    private function getTempDirectory(): string
+    {
+        return self::$tempDirectory;
+    }
+
+    protected function createUniqueFileHash(): string
+    {
+        return md5($this->content);
+    }
+
+    private function assertTempFolderExists(): self
+    {
+        if (!file_exists($this->getTempDirectory()) && !mkdir($this->getTempDirectory())) {
+            throw new InvalidArgumentException('Could not create temp directory path in ' . __METHOD__);
+        }
+
+        Assert::directory($this->getTempDirectory(), 'Temp directory path exists but is not a directory');
+
+        return $this;
     }
 
 }

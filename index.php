@@ -20,8 +20,18 @@ use RozbehSharahi\SvgConvert\Svg;
  */
 (function() {
 
-    Svg::setDefaultRootDirectory(__DIR__);
-    $svg = Svg::createFromFile('/example.svg');
-    echo "<img alt='test' src='{$svg->getPngBase64(600, 700)}' />";
+    Svg::setTempDirectory(__DIR__.'/tmp');
+
+    // Return base64 encoded png ready to render in <img /> tag.
+    echo Svg::createFromFile('example.svg')->getPngBase64();
+
+    // Write into png file
+    Svg::createFromFile('example.svg')->writeToFile('example.png');
+
+    // Write into png file
+    Svg::createFromFile('example.svg')->writeToFile('example.jpg');
+
+    // Write into png file
+    Svg::createFromFile('example.svg')->writeToFile('example.gif');
 
 })();
