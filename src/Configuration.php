@@ -7,9 +7,18 @@ use Webmozart\Assert\Assert;
 class Configuration
 {
     private $file;
+
     private $format = 'png';
+
     private $width = 0;
+
     private $height = 0;
+
+    private $formatHeaderMapping = [
+        'png' => 'Content-Type: image/png',
+        'jpg' => 'Content-Type: image/jpeg',
+        'gif' => 'Content-Type: image/gif',
+    ];
 
     static public function create(): self
     {
@@ -78,6 +87,12 @@ class Configuration
     {
         $this->format = $format;
         return $this;
+    }
+
+    public function getHeader(): string
+    {
+        Assert::keyExists($this->formatHeaderMapping, $this->format, "No header for format {$this->format} defined");
+        return $this->formatHeaderMapping[$this->format];
     }
 
 }

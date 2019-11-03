@@ -11,10 +11,11 @@ composer require rozbehsharahi/svg-convert
 
 ```php
 <?php
+use RozbehSharahi\SvgConvert\ImageMagickConverter;
 use RozbehSharahi\SvgConvert\Svg;
 use RozbehSharahi\SvgConvert\Configuration;
 
-Svg::setTempDirectory(__DIR__.'/tmp');
+ImageMagickConverter::setTempDirectory(__DIR__.'/tmp');
 
 // Write into png file
 Svg::createFromFile('example.svg')->writeToFile(Configuration::create()->setFile('example.png'));
