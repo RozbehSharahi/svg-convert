@@ -11,20 +11,22 @@ class Svg
 
     private $converter;
 
+    private $defaultConverter;
+
     static public function createFromFile(string $file, ConverterInterface $converter = null): self
     {
         Assert::file($file, "Appears not to be file: `{$file}`");
-        return new static(file_get_contents($file));
+        return new static(file_get_contents($file), $converter);
     }
 
     static public function createFromContent(string $content, ConverterInterface $converter = null): self
     {
-        return new static($content);
+        return new static($content, $converter);
     }
 
     static public function createFromBase64(string $content, ConverterInterface $converter = null): self
     {
-        return new static(base64_decode($content));
+        return new static(base64_decode($content), $converter);
     }
 
     public function __construct(string $content, ConverterInterface $converter = null)
@@ -58,9 +60,9 @@ class Svg
         return $this;
     }
 
-    private function getDefaultConverter(): ImageMagickConverter
+    private function getDefaultConverter(): ConverterInterface
     {
-        return new ImageMagickConverter();
+        return $this->defaultConverter = $this->defaultConverter ?: new ImageMagickConverter();
     }
 
 }
