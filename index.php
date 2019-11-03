@@ -20,9 +20,9 @@ use RozbehSharahi\SvgConvert\Svg;
 /**
  * Example how to use
  */
-(function() {
+(function () {
 
-    ImageMagickConverter::setTempDirectory(__DIR__.'/tmp');
+    ImageMagickConverter::setTempDirectory(__DIR__ . '/tmp');
 
     // Write into png file
     Svg::createFromFile('example.svg')->writeToFile(Configuration::create()->setFile('example.png'));
@@ -37,7 +37,7 @@ use RozbehSharahi\SvgConvert\Svg;
     Svg::createFromFile('example.svg')->writeToFile(
         Configuration::create()
             ->setFile('example_1000x1000.png')
-            ->setDimension(1000,1000)
+            ->setDimension(1000, 1000)
     );
 
     // Returns base64 string ready for <img> tag
@@ -51,5 +51,10 @@ use RozbehSharahi\SvgConvert\Svg;
 
     // Renders the svg as png
     Svg::createFromFile('example.svg')->render(Configuration::create());
+
+    // Create svg from different sources
+    Svg::createFromFile('example.svg');
+    Svg::createFromContent('SVG_STRING_HERE');
+    Svg::createFromBase64('BASE_64_STRING_HERE');
 
 })();

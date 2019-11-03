@@ -44,6 +44,11 @@ Svg::createFromFile('example.svg')->getBase64(Configuration::create()->setFormat
 
 // Renders the svg as png
 Svg::createFromFile('example.svg')->render(Configuration::create());
+
+// Create svg from different sources
+Svg::createFromFile('example.svg');
+Svg::createFromContent('SVG_STRING_HERE');
+Svg::createFromBase64('BASE_64_STRING_HERE');
 ```
 
 ## Information
