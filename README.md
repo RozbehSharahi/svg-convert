@@ -15,9 +15,6 @@ use RozbehSharahi\SvgConvert\Svg;
 
 Svg::setTempDirectory(__DIR__.'/tmp');
 
-// Return base64 encoded png ready to render in <img /> tag.
-echo Svg::createFromFile('example.svg')->getPngBase64();
-
 // Write into png file
 Svg::createFromFile('example.svg')->writeToFile('example.png');
 
@@ -26,6 +23,9 @@ Svg::createFromFile('example.svg')->writeToFile('example.jpg');
 
 // Write into png file
 Svg::createFromFile('example.svg')->writeToFile('example.gif');
+
+// Return base64 encoded png ready to render in <img /> tag.
+echo Svg::createFromFile('example.svg')->getBase64('png');
 ```
 
 ## Information

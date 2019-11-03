@@ -8,7 +8,8 @@ use Webmozart\Assert\Assert;
 class Svg
 {
 
-    protected static $tempDirectory = __DIR__ . '/tmp';
+    static protected $tempDirectory = __DIR__ . '/tmp';
+    static protected $supportedFormats = ['png', 'jpg', 'gif'];
 
     private $content;
 
@@ -39,32 +40,38 @@ class Svg
         $this->content = $content;
     }
 
-    public function getPngBase64(): string
+    public function getBase64(string $format = 'png'): string
     {
+        return "data:image/{$format};base64," . base64_encode($this->getBlob($format));
+    }
+
+    public function writeToFile(string $filePath): self
+    {
+        $pathInfo = pathinfo($filePath);
+
+        Assert::notEmpty($pathInfo['extension'], 'File path is not valid, could not determine format.');
+        Assert::notEmpty($pathInfo['basename'], 'File path is not valid, could not determine filename.');
+
+        file_put_contents($pathInfo['dirname'] . '/' . $pathInfo['basename'], $this->getBlob($pathInfo['extension']));
+
+        return $this;
+    }
+
+    public function getBlob(string $format = 'png'): string
+    {
+        Assert::oneOf($format, self::$supportedFormats, "The given format is not supported");
+
         $fileHash = $this->createUniqueFileHash();
-        $inputFilePath = "input_{$fileHash}.svg";
-        $outputFilePath = "output_{$fileHash}.png";
+        $inputFilePath = $this->getTempDirectory() . "/input_{$fileHash}.svg";
+        $outputFilePath = $this->getTempDirectory() . "/output_{$fileHash}." . $format;
 
         file_put_contents($inputFilePath, $this->content);
         exec("convert {$inputFilePath} {$outputFilePath}");
-        $imageContent = file_get_contents($outputFilePath);
+        $blob = file_get_contents($outputFilePath);
         unlink($outputFilePath);
         unlink($inputFilePath);
 
-        return "data:image/png;base64," . base64_encode($imageContent);
-    }
-
-    public function writeToFile(string $file): self
-    {
-        $fileHash = $this->createUniqueFileHash();
-
-        $inputFilePath = "input_{$fileHash}.svg";
-
-        file_put_contents($inputFilePath, $this->content);
-        exec("convert {$inputFilePath} {$file}");
-        unlink(($inputFilePath));
-        
-        return $this;
+        return $blob;
     }
 
     private function getTempDirectory(): string
@@ -79,7 +86,7 @@ class Svg
 
     private function assertTempFolderExists(): self
     {
-        if (!file_exists($this->getTempDirectory()) && !mkdir($this->getTempDirectory())) {
+        if (!file_exists($this->getTempDirectory()) && !mkdir($this->getTempDirectory(), 0777, true)) {
             throw new InvalidArgumentException('Could not create temp directory path in ' . __METHOD__);
         }
 
