@@ -12,20 +12,37 @@ composer require rozbehsharahi/svg-convert
 ```php
 <?php
 use RozbehSharahi\SvgConvert\Svg;
+use RozbehSharahi\SvgConvert\Configuration;
 
 Svg::setTempDirectory(__DIR__.'/tmp');
 
 // Write into png file
-Svg::createFromFile('example.svg')->writeToFile('example.png');
+Svg::createFromFile('example.svg')->writeToFile(Configuration::create()->setFile('example.png'));
 
-// Write into png file
-Svg::createFromFile('example.svg')->writeToFile('example.jpg');
+// Write into jpg file
+Svg::createFromFile('example.svg')->writeToFile(Configuration::create()->setFile('example.jpg'));
 
-// Write into png file
-Svg::createFromFile('example.svg')->writeToFile('example.gif');
+// Write into gif file
+Svg::createFromFile('example.svg')->writeToFile(Configuration::create()->setFile('example.gif'));
 
-// Return base64 encoded png ready to render in <img /> tag.
-echo Svg::createFromFile('example.svg')->getBase64('png');
+// Write into png with given dimension
+Svg::createFromFile('example.svg')->writeToFile(
+    Configuration::create()
+        ->setFile('example_1000x1000.png')
+        ->setDimension(1000,1000)
+);
+
+// Returns base64 string ready for <img> tag
+Svg::createFromFile('example.svg')->getBase64(Configuration::create());
+
+// Returns base64 string ready for <img> tag
+Svg::createFromFile('example.svg')->getBase64(Configuration::create()->setFormat('jpg'));
+
+// Returns base64 string ready for <img> tag
+Svg::createFromFile('example.svg')->getBase64(Configuration::create()->setFormat('gif'));
+
+// Renders the svg as png
+Svg::createFromFile('example.svg')->render(Configuration::create());
 ```
 
 ## Information
