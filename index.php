@@ -16,6 +16,7 @@ foreach ($possibleAutoLoadPaths as $file) {
 use RozbehSharahi\SvgConvert\Configuration;
 use RozbehSharahi\SvgConvert\Svg;
 use RozbehSharahi\SvgConvert\ImageMagickConverter;
+use RozbehSharahi\SvgConvert\GraphicsMagickConverter;
 use RozbehSharahi\SvgConvert\RsvgConverter;
 
 /**
@@ -54,8 +55,9 @@ use RozbehSharahi\SvgConvert\RsvgConverter;
     // Renders the svg as png
     Svg::createFromFile('example.svg')->render(Configuration::create());
 
-    // Use different converter (RSVG)
+    // Use different converters
     Svg::createFromFile('example.svg')->use(new RsvgConverter)->getBase64Url(Configuration::create());
+    Svg::createFromFile('example.svg')->use(new GraphicsMagickConverter)->getBase64Url(Configuration::create());
 
     // Create svg from different sources
     Svg::createFromFile('example.svg');

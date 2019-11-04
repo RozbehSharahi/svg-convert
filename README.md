@@ -4,6 +4,7 @@ Library to convert SVG to other formats using ImageMagick.
 Currently contains two converter implementations:
 
 - ImageMagickConverter (Default)
+- GraphicsMagickConverter
 - RsvgConverter
 
 ## Install package
@@ -19,6 +20,7 @@ composer require rozbehsharahi/svg-convert
 use RozbehSharahi\SvgConvert\Svg;
 use RozbehSharahi\SvgConvert\Configuration;
 use RozbehSharahi\SvgConvert\ImageMagickConverter;
+use RozbehSharahi\SvgConvert\GraphicsMagickConverter;
 use RozbehSharahi\SvgConvert\RsvgConverter;
 
 // Write into png file
@@ -52,12 +54,13 @@ Svg::createFromFile('example.svg')->getBase64(Configuration::create()->setFormat
 // Renders the svg as png
 Svg::createFromFile('example.svg')->render(Configuration::create());
 
-// Use different converter (RSVG)
-Svg::createFromFile('example.svg')->use(new RsvgConverter())->getBase64Url(Configuration::create());
+// Use different converters
+Svg::createFromFile('example.svg')->use(new RsvgConverter)->getBase64Url(Configuration::create());
+Svg::createFromFile('example.svg')->use(new GraphicsMagickConverter)->getBase64Url(Configuration::create());
 
 // Create svg from different sources
 Svg::createFromFile('example.svg');
-Svg::createFromContent('SVG_STRING_HERE');
+Svg::createFromContent('<svg>...</svg>');
 Svg::createFromBase64('BASE_64_STRING_HERE');
 
 // Set default converter

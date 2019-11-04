@@ -12,27 +12,33 @@ class ImageMagickConverter implements ConverterInterface
     static public function setCommand(string $command): void
     {
         Assert::commandExists($command);
-        self::$command = $command;
+        static::$command = $command;
     }
 
     public function __construct()
     {
-        Assert::commandExists(self::$command, self::$command . ' not installed for ' . __METHOD__);
+        Assert::commandExists(static::$command, static::$command . ' not installed for ' . __METHOD__);
     }
 
     public function getBlob(Svg $svg, Configuration $configuration): string
     {
         $format = $configuration->getFormat();
 
-        Assert::oneOf($format, self::$supportedFormats, "Given format `{$format}` is not supported by rsgv converter");
+        Assert::oneOf($format, static::$supportedFormats, "Given format `{$format}` is not supported by rsgv converter");
 
         $svg = base64_encode($svg->getContent());
         $width = $configuration->getWidth();
         $height = $configuration->getHeight();
         $resize = $configuration->hasDimension() ? "-resize {$width}x{$height}" : '';
-        $command = self::$command;
+        $command = $this->getCommand();
 
-        return shell_exec("(echo '{$svg}' | base64 --decode | {$command} {$resize} -background none svg:- png:-)");
+        $command = "(echo '{$svg}' | base64 --decode | {$command} {$resize} -background none svg:- png:-)";
+        return shell_exec($command);
+    }
+
+    protected function getCommand(): string
+    {
+        return static::$command;
     }
 
 }
