@@ -14,8 +14,9 @@ foreach ($possibleAutoLoadPaths as $file) {
 }
 
 use RozbehSharahi\SvgConvert\Configuration;
-use RozbehSharahi\SvgConvert\RsvgConverter;
 use RozbehSharahi\SvgConvert\Svg;
+use RozbehSharahi\SvgConvert\ImageMagickConverter;
+use RozbehSharahi\SvgConvert\RsvgConverter;
 
 /**
  * Example how to use
@@ -57,5 +58,12 @@ use RozbehSharahi\SvgConvert\Svg;
     Svg::createFromFile('example.svg');
     Svg::createFromContent('SVG_STRING_HERE');
     Svg::createFromBase64('BASE_64_STRING_HERE');
+
+    // Set default converter
+    Svg::setDefaultConverter(new RsvgConverter());
+
+    // Set command for converters
+    ImageMagickConverter::setCommand('/usr/bin/convert');
+    RsvgConverter::setCommand('/usr/bin/rsvg-convert');
 
 })();

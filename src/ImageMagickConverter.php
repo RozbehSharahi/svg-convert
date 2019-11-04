@@ -9,9 +9,16 @@ class ImageMagickConverter implements ConverterInterface
 
     static protected $supportedFormats = ['png', 'jpg', 'gif'];
 
+    static protected $command = 'convert';
+
+    static public function setCommand(string $command): void
+    {
+        self::$command = $command;
+    }
+
     public function __construct()
     {
-        Assert::notEmpty(shell_exec('which convert'), 'rsvg-convert not installed! Cannot use ' . __METHOD__);
+        Assert::notEmpty(shell_exec('which ' . self::$command), self::$command . ' not installed for ' . __METHOD__);
     }
 
     public function getBlob(Svg $svg, Configuration $configuration): string
@@ -24,8 +31,9 @@ class ImageMagickConverter implements ConverterInterface
         $width = $configuration->getWidth();
         $height = $configuration->getHeight();
         $resize = $configuration->hasDimension() ? "-resize {$width}x{$height}" : '';
+        $command = self::$command;
 
-        return shell_exec("(echo '{$svg}' | base64 --decode | convert {$resize} svg:- png:-)");
+        return shell_exec("(echo '{$svg}' | base64 --decode | {$command} {$resize} svg:- png:-)");
     }
 
 }

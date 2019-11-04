@@ -18,6 +18,7 @@ composer require rozbehsharahi/svg-convert
 <?php
 use RozbehSharahi\SvgConvert\Svg;
 use RozbehSharahi\SvgConvert\Configuration;
+use RozbehSharahi\SvgConvert\ImageMagickConverter;
 use RozbehSharahi\SvgConvert\RsvgConverter;
 
 // Write into png file
@@ -55,6 +56,13 @@ Svg::createFromFile('example.svg')->use(new RsvgConverter())->getBase64(Configur
 Svg::createFromFile('example.svg');
 Svg::createFromContent('SVG_STRING_HERE');
 Svg::createFromBase64('BASE_64_STRING_HERE');
+
+// Set default converter
+Svg::setDefaultConverter(new RsvgConverter());
+
+// Set command for converters
+ImageMagickConverter::setCommand('/usr/bin/convert');
+RsvgConverter::setCommand('/usr/bin/rsvg-convert');
 ```
 
 ## Information
