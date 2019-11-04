@@ -10,14 +10,12 @@
         }
     ],
     "require": {
-        "php": ">=7.1.0"
+        "php": ">=7.1.0",
+        "webmozart/assert": "^1.5"
     },
     "autoload": {
         "psr-4": {
             "RozbehSharahi\\SvgConvert\\": "src/"
         }
-    },
-    "require-dev": {
-        "webmozart/assert": "^1.5"
     }
 }

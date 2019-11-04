@@ -61,7 +61,7 @@ Svg::createFromFile('example.svg')->use(new GraphicsMagickConverter)->getBase64U
 // Create svg from different sources
 Svg::createFromFile('example.svg');
 Svg::createFromContent('<svg>...</svg>');
-Svg::createFromBase64('BASE_64_STRING_HERE');
+Svg::createFromBase64('aSBsb3ZlIHByb2dhbW1pbmcK');
 
 // Set default converter
 Svg::setDefaultConverter(new RsvgConverter());
