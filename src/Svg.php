@@ -7,32 +7,42 @@ use Webmozart\Assert\Assert;
 class Svg
 {
 
+    static protected $defaultConverter;
+
     private $content;
 
     private $converter;
 
-    private $defaultConverter;
-
-    static public function createFromFile(string $file, ConverterInterface $converter = null): self
+    static public function createFromFile(string $file): self
     {
         Assert::file($file, "Appears not to be file: `{$file}`");
-        return new static(file_get_contents($file), $converter);
+        return new static(file_get_contents($file));
     }
 
-    static public function createFromContent(string $content, ConverterInterface $converter = null): self
+    static public function createFromContent(string $content): self
     {
-        return new static($content, $converter);
+        return new static($content);
     }
 
-    static public function createFromBase64(string $content, ConverterInterface $converter = null): self
+    static public function createFromBase64(string $content): self
     {
-        return new static(base64_decode($content), $converter);
+        return new static(base64_decode($content));
     }
 
-    public function __construct(string $content, ConverterInterface $converter = null)
+    static protected function getDefaultConverter(): ConverterInterface
+    {
+        return self::$defaultConverter = self::$defaultConverter ?: new ImageMagickConverter();
+    }
+
+    static public function setDefaultConverter(ConverterInterface $converter): void
+    {
+        self::$defaultConverter = $converter;
+    }
+
+    public function __construct(string $content)
     {
         $this->content = $content;
-        $this->converter = $converter ?: $this->getDefaultConverter();
+        $this->converter = self::getDefaultConverter();
     }
 
     public function getContent(): string
@@ -55,14 +65,22 @@ class Svg
 
     public function render(Configuration $configuration): self
     {
+        $blob = $this->converter->getBlob($this, $configuration);
+
         header($configuration->getHeader());
-        echo $this->converter->getBlob($this, $configuration);
+        echo $blob;
         return $this;
     }
 
-    private function getDefaultConverter(): ConverterInterface
+    public function use(ConverterInterface $converter): self
     {
-        return $this->defaultConverter = $this->defaultConverter ?: new ImageMagickConverter();
+        return $this->setConverter($converter);
+    }
+
+    public function setConverter(ConverterInterface $converter): self
+    {
+        $this->converter = $converter;
+        return $this;
     }
 
 }
