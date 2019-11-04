@@ -2,8 +2,6 @@
 
 namespace RozbehSharahi\SvgConvert;
 
-use Webmozart\Assert\Assert;
-
 class Configuration
 {
     private $file;

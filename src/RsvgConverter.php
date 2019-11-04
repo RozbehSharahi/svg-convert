@@ -2,8 +2,6 @@
 
 namespace RozbehSharahi\SvgConvert;
 
-use Webmozart\Assert\Assert;
-
 class RsvgConverter implements ConverterInterface
 {
 
@@ -13,12 +11,13 @@ class RsvgConverter implements ConverterInterface
 
     static public function setCommand(string $command): void
     {
+        Assert::commandExists($command);
         self::$command = $command;
     }
 
     public function __construct()
     {
-        Assert::notEmpty(shell_exec("which " . self::$command), self::$command . ' not installed for ' . __METHOD__);
+        Assert::commandExists(self::$command, self::$command . ' not installed for ' . __METHOD__);
     }
 
     public function getBlob(Svg $svg, Configuration $configuration): string

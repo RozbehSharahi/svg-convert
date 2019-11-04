@@ -40,24 +40,27 @@ use RozbehSharahi\SvgConvert\RsvgConverter;
     );
 
     // Returns base64 string ready for <img> tag
-    Svg::createFromFile('example.svg')->getBase64(Configuration::create());
+    Svg::createFromFile('example.svg')->getBase64Url(Configuration::create());
 
     // Returns base64 string ready for <img> tag
-    Svg::createFromFile('example.svg')->getBase64(Configuration::create()->setFormat('jpg'));
+    Svg::createFromFile('example.svg')->getBase64Url(Configuration::create()->setFormat('jpg'));
 
     // Returns base64 string ready for <img> tag
+    Svg::createFromFile('example.svg')->getBase64Url(Configuration::create()->setFormat('gif'));
+
+    // Returns base64 encoded image
     Svg::createFromFile('example.svg')->getBase64(Configuration::create()->setFormat('gif'));
 
     // Renders the svg as png
     Svg::createFromFile('example.svg')->render(Configuration::create());
 
     // Use different converter (RSVG)
-    Svg::createFromFile('example.svg')->use(new RsvgConverter)->getBase64(Configuration::create());
+    Svg::createFromFile('example.svg')->use(new RsvgConverter)->getBase64Url(Configuration::create());
 
     // Create svg from different sources
     Svg::createFromFile('example.svg');
-    Svg::createFromContent('SVG_STRING_HERE');
-    Svg::createFromBase64('BASE_64_STRING_HERE');
+    Svg::createFromContent('<svg>...</svg>');
+    Svg::createFromBase64('aSBsb3ZlIHByb2dhbW1pbmcK');
 
     // Set default converter
     Svg::setDefaultConverter(new RsvgConverter());
