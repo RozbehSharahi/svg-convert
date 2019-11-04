@@ -9,6 +9,11 @@ class RsvgConverter implements ConverterInterface
 
     static protected $supportedFormats = ['png'];
 
+    public function __construct()
+    {
+        Assert::notEmpty(shell_exec('which rsvg-convert'), 'rsvg-convert not installed! Cannot use ' . __METHOD__);
+    }
+
     public function getBlob(Svg $svg, Configuration $configuration): string
     {
         $format = $configuration->getFormat();
